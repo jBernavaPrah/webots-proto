@@ -1,0 +1,16 @@
+#VRML_SIM R2025a utf8
+
+PROTO WithTemplate [
+  field SFVec3f pos 1 2 3
+  field SFString text "Hello"
+]
+{
+  Transform {
+    translation %<= fields.pos.value.x >% %<= fields.pos.value.y >% %<= fields.pos.value.z >%
+    children [
+      Shape {
+        geometry Text { string [ "%<= fields.text.value >%" ] }
+      }
+    ]
+  }
+}

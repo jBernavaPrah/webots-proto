@@ -1,0 +1,23 @@
+[workspace]
+members = ["crates/*"]
+exclude = ["fuzz"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+rust-version = "1.85"
+repository = "https://github.com/jBernavaPrah/webots-proto"
+homepage = "https://github.com/jBernavaPrah/webots-proto"
+
+[workspace.dependencies]
+boa_engine = "0.19"
+boa_gc = "0.19"
+criterion = "0.5"
+derive-new = "0.7.0"
+derive_setters = "0.1.8"
+proptest = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0.16"

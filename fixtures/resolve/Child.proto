@@ -1,0 +1,10 @@
+#VRML_SIM R2025a utf8
+
+PROTO Child [
+  field SFVec3f size 1 1 1
+]
+{
+  Shape {
+    geometry Box { size IS size }
+  }
+}

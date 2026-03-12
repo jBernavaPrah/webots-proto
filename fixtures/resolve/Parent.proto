@@ -1,0 +1,17 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "Child.proto"
+
+PROTO Parent [
+  field SFVec3f translation 0 0 0
+]
+{
+  Transform {
+    translation IS translation
+    children [
+      Child {
+        size 2 2 2
+      }
+    ]
+  }
+}

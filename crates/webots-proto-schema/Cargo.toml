@@ -1,0 +1,25 @@
+[package]
+name = "webots-proto-schema"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = true
+description = "Versioned schemas, typed nodes, and validation for Webots PROTO."
+readme = "README.md"
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/webots-proto-schema"
+keywords = ["webots", "proto", "schema", "validation", "robotics"]
+categories = ["encoding", "data-structures", "science::robotics"]
+
+[dependencies]
+webots-proto-ast = { path = "../webots-proto-ast" }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+derive-new.workspace = true
+derive_setters.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

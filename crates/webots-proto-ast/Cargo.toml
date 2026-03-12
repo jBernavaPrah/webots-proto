@@ -1,0 +1,32 @@
+[package]
+name = "webots-proto-ast"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = true
+description = "Parser, AST, spans, and serialization for Webots PROTO documents."
+readme = "README.md"
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/webots-proto-ast"
+keywords = ["webots", "proto", "ast", "parser", "vrml"]
+categories = ["parser-implementations", "encoding", "science::robotics"]
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+derive-new.workspace = true
+derive_setters.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true
+
+[[bench]]
+name = "parse_benchmark"
+harness = false
+
+[[bench]]
+name = "write_benchmark"
+harness = false

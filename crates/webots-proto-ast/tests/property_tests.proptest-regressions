@@ -1,0 +1,9 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 6644f1dec813ac1bb7cf8872c8431be5be9ec43b26a42b4b6f4a5f800b5ef20c # shrinks to val = Vec2f([0.0, 0.0])
+cc 1d008044234b1051161381223642d7d4018051e16ff63eb5768b0ac736e1dfb0 # shrinks to val = Int(0, None)
+cc 38414faef626c42434b05571b1ce1872c68f3b03aa7f7d7583bb69eb0fcd94e1 # shrinks to val = Float(-0.0, None)

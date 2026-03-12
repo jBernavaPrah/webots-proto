@@ -1,0 +1,19 @@
+[package]
+name = "webots-proto-resolver"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = true
+description = "EXTERNPROTO resolution for Webots PROTO documents."
+readme = "README.md"
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/webots-proto-resolver"
+keywords = ["webots", "proto", "resolver", "externproto", "robotics"]
+categories = ["parser-implementations", "filesystem", "science::robotics"]
+
+[dependencies]
+webots-proto-ast = { path = "../webots-proto-ast" }
+webots-proto-template = { path = "../webots-proto-template" }
+thiserror.workspace = true

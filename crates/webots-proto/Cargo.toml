@@ -1,0 +1,29 @@
+[package]
+name = "webots-proto"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = true
+description = "Facade crate for parsing, templating, resolving, and validating Webots PROTO."
+readme = "README.md"
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://docs.rs/webots-proto"
+keywords = ["webots", "proto", "vrml", "robotics", "parser"]
+categories = ["parser-implementations", "encoding", "science::robotics"]
+
+[features]
+default = ["template", "resolver", "schema", "validation", "r2025a"]
+template = ["dep:webots-proto-template"]
+resolver = ["template", "dep:webots-proto-resolver"]
+schema = ["dep:webots-proto-schema"]
+validation = ["schema", "resolver"]
+r2025a = ["schema"]
+
+[dependencies]
+webots-proto-ast = { path = "../webots-proto-ast" }
+webots-proto-template = { path = "../webots-proto-template", optional = true }
+webots-proto-resolver = { path = "../webots-proto-resolver", optional = true }
+webots-proto-schema = { path = "../webots-proto-schema", optional = true }
+thiserror.workspace = true
