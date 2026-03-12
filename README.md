@@ -1,77 +1,67 @@
 # webots-proto
 
+[![Crates.io](https://img.shields.io/crates/v/webots-proto.svg)](https://crates.io/crates/webots-proto)
+[![License](https://img.shields.io/crates/l/webots-proto.svg)](https://github.com/jBernavaPrah/webots-proto/blob/main/LICENSE)
+
 Rust workspace for parsing, rendering, resolving, validating, and typing Webots PROTO files.
 
-## Crates
+## Overview
+
+This repository is split into focused crates:
 
 - `webots-proto`: façade crate for most consumers
 - `webots-proto-ast`: parser, AST, spans, writer
 - `webots-proto-template`: JavaScript template evaluation
 - `webots-proto-resolver`: `EXTERNPROTO` expansion
-- `webots-proto-schema`: typed nodes, validation, and versioned codecs
+- `webots-proto-schema`: validation, typed nodes, and versioned codecs
 
-## Recommended Dependency
+For most use cases, depend on `webots-proto`.
 
 ```toml
 [dependencies]
 webots-proto = "0.1"
 ```
 
-Use the façade crate unless you explicitly want one layer only.
-
-### Façade Features
-
-`webots-proto` supports optional layers:
-
-- `template`: template rendering
-- `resolver`: `EXTERNPROTO` expansion
-- `schema`: diagnostics, typed conversions, schema exports
-- `validation`: façade `validate()` support
-- `r2025a`: typed R2025a codec and node exports
-
-The default feature set enables all of them.
-
-## Quick Start
-
-```rust
-use webots_proto::Proto;
-
-let input = r#"#VRML_SIM R2025a utf8
-PROTO MyRobot [ ] { Robot { } }
-"#;
-
-let proto: Proto = input.parse()?;
-let canonical = proto.to_canonical_string()?;
-println!("{canonical}");
-```
+## Example
 
 ```rust
 use webots_proto::{Proto, ProtoExt, RenderOptions};
 
-let proto: Proto = std::fs::read_to_string("robot.proto")?.parse()?;
+let proto: Proto = r#"#VRML_SIM R2025a utf8
+PROTO Demo [
+  field SFInt32 count 2
+] {
+  WorldInfo { title "%<= fields.count.value >%" }
+}
+"#
+.parse()?;
+
 let rendered = proto.render(&RenderOptions::default())?;
 let diagnostics = proto.validate()?;
+
+assert!(!diagnostics.has_errors());
+println!("{rendered}");
+# Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
-## Versioned Typed Nodes
+## Façade Features
 
-```rust
-use webots_proto::r2025a::{R2025aCodec, Robot};
+`webots-proto` exposes optional layers:
 
-let codec = R2025aCodec::new();
-let robot: Robot = codec.decode(
-    r#"#VRML_SIM R2025a utf8
-Robot { name "my_robot" }
-"#,
-)?;
-assert_eq!(robot.name, "my_robot");
-```
+- `template`: template rendering
+- `resolver`: `EXTERNPROTO` expansion
+- `schema`: diagnostics, schema exports, typed conversions
+- `validation`: façade validation helpers
+- `r2025a`: typed R2025a nodes and codec
+
+Default features enable the full façade.
 
 ## Repository Layout
 
 - `crates/`: publishable crates
-- `examples/`: per-crate example programs
-- `fixtures/`: parsing and resolver fixtures
+- `fixtures/`: parser and resolver fixtures
+
+Examples and benches live in the crates that own them.
 
 ## Development
 
@@ -79,7 +69,7 @@ assert_eq!(robot.name, "my_robot");
 cargo fmt --all
 cargo check --workspace --all-targets
 cargo clippy --workspace --all-targets -- -D warnings
-cargo test
+cargo test -q
 ```
 
 Parser and writer benchmarks live in `webots-proto-ast`:
@@ -87,3 +77,8 @@ Parser and writer benchmarks live in `webots-proto-ast`:
 ```bash
 cargo bench -p webots-proto-ast
 ```
+
+## Release Flow
+
+- Pull requests run format, check, clippy, and tests in CI
+- `release-plz` manages release PRs, tags, and crates.io publishing from `main`
