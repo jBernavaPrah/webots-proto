@@ -70,10 +70,8 @@ assert_eq!(robot.name, "my_robot");
 ## Repository Layout
 
 - `crates/`: publishable crates
-- `examples/`: repository-level example programs
+- `examples/`: per-crate example programs
 - `fixtures/`: parsing and resolver fixtures
-
-The root manifest is a virtual workspace, so files under `examples/` are shared source examples, not Cargo example targets.
 
 ## Development
 

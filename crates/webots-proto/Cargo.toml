@@ -22,8 +22,8 @@ validation = ["schema", "resolver"]
 r2025a = ["schema"]
 
 [dependencies]
-webots-proto-ast = { path = "../webots-proto-ast" }
-webots-proto-template = { path = "../webots-proto-template", optional = true }
-webots-proto-resolver = { path = "../webots-proto-resolver", optional = true }
-webots-proto-schema = { path = "../webots-proto-schema", optional = true }
+webots-proto-ast.workspace = true
+webots-proto-template = { workspace = true, optional = true }
+webots-proto-resolver = { workspace = true, optional = true }
+webots-proto-schema = { workspace = true, optional = true }
 thiserror.workspace = true

@@ -14,7 +14,7 @@ keywords = ["webots", "proto", "template", "javascript", "robotics"]
 categories = ["compilers", "text-processing", "science::robotics"]
 
 [dependencies]
-webots-proto-ast = { path = "../webots-proto-ast" }
+webots-proto-ast.workspace = true
 boa_engine.workspace = true
 boa_gc.workspace = true
 serde_json.workspace = true

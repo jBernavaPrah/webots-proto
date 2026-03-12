@@ -14,6 +14,6 @@ keywords = ["webots", "proto", "resolver", "externproto", "robotics"]
 categories = ["parser-implementations", "filesystem", "science::robotics"]
 
 [dependencies]
-webots-proto-ast = { path = "../webots-proto-ast" }
-webots-proto-template = { path = "../webots-proto-template" }
+webots-proto-ast.workspace = true
+webots-proto-template.workspace = true
 thiserror.workspace = true

@@ -14,7 +14,7 @@ keywords = ["webots", "proto", "schema", "validation", "robotics"]
 categories = ["encoding", "data-structures", "science::robotics"]
 
 [dependencies]
-webots-proto-ast = { path = "../webots-proto-ast" }
+webots-proto-ast.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
