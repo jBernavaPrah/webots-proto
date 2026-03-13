@@ -319,3 +319,79 @@ Solid {
             .any(|w| w.message.contains("unique among sibling Solid nodes"))
     );
 }
+
+#[test]
+fn test_warns_when_shape_geometry_contains_cadshape() {
+    let input = r#"#VRML_SIM R2025a utf8
+Shape {
+  geometry CadShape {
+    url [ "meshes/robot.obj" ]
+  }
+}
+"#;
+    let mut parser = Parser::new(input);
+    let doc = parser.parse_document().unwrap();
+    let diagnostics = validate(&doc);
+    let warnings: Vec<_> = diagnostics
+        .iter()
+        .filter(|d| d.severity == Severity::Warning)
+        .collect();
+
+    assert_eq!(
+        warnings.len(),
+        1,
+        "expected one warning, got: {:?}",
+        warnings.iter().map(|d| &d.message).collect::<Vec<_>>()
+    );
+    assert!(
+        warnings
+            .iter()
+            .any(|w| w.message.contains("Cannot insert CadShape node in 'geometry' field of Shape node")),
+        "expected CadShape geometry warning, got: {:?}",
+        warnings.iter().map(|d| &d.message).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn test_warns_when_robot_physics_has_no_inertia_source() {
+    let input = r#"#VRML_SIM R2025a utf8
+Robot {
+  physics Physics {
+    mass 1
+  }
+}
+"#;
+    let mut parser = Parser::new(input);
+    let doc = parser.parse_document().unwrap();
+    let diagnostics = validate(&doc);
+
+    let warnings: Vec<_> = diagnostics
+        .iter()
+        .filter(|d| d.severity == Severity::Warning)
+        .collect();
+    assert!(
+        warnings
+            .iter()
+            .any(|w| w.message.contains("Undefined inertia matrix")),
+        "expected inertia warning, got: {:?}",
+        warnings.iter().map(|d| &d.message).collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn test_validate_flat_mfvec3f_array_values() {
+    let input = r#"#VRML_SIM R2025a utf8
+Accelerometer {
+  lookupTable [ -100 0.01 0, 100 0.01 0 ]
+}
+"#;
+    let mut parser = Parser::new(input);
+    let doc = parser.parse_document().unwrap();
+    let diagnostics = validate(&doc);
+
+    assert!(
+        !diagnostics.has_errors(),
+        "expected no validation errors, got: {:?}",
+        diagnostics.iter().collect::<Vec<_>>()
+    );
+}

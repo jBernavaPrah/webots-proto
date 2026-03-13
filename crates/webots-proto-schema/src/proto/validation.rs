@@ -280,6 +280,12 @@ fn validate_ast_node(node: &AstNode, context: &mut ValidationContext) -> Diagnos
                                 &expected_type,
                                 &field.span,
                             ));
+                            diagnostics.extend(validate_node_field_semantics(
+                                type_name,
+                                &field.name,
+                                &field.value,
+                                &field.span,
+                            ));
 
                             // Check IS binding
                             if let FieldValue::Is(ref_name) = &field.value {
@@ -392,7 +398,7 @@ fn validate_runtime_semantics_for_node(node: &AstNode) -> DiagnosticSet {
         return diagnostics;
     };
 
-    if type_name == "Solid" {
+    if matches!(type_name.as_str(), "Solid" | "Robot") {
         if solid_requires_inertia_warning(fields) {
             diagnostics.add(Diagnostic {
                 span: node.span.clone(),
@@ -598,6 +604,35 @@ fn get_node_field<'a>(fields: &'a [NodeBodyElement], name: &str) -> Option<&'a N
     })
 }
 
+fn validate_node_field_semantics(
+    parent_type_name: &str,
+    field_name: &str,
+    value: &FieldValue,
+    span: &Span,
+) -> DiagnosticSet {
+    let mut diagnostics = DiagnosticSet::new();
+
+    if parent_type_name == "Shape"
+        && field_name == "geometry"
+        && let FieldValue::Node(node) = value
+        && let AstNodeKind::Node { type_name, .. } = &node.kind
+        && type_name == "CadShape"
+    {
+        diagnostics.add(Diagnostic {
+            span: span.clone(),
+            severity: Severity::Warning,
+            message: "Skipped node: Cannot insert CadShape node in 'geometry' field of Shape node."
+                .to_string(),
+            suggestion: Some(
+                "Use a geometry node supported by Shape.geometry, such as Mesh, Box, Sphere, or IndexedFaceSet."
+                    .to_string(),
+            ),
+        });
+    }
+
+    diagnostics
+}
+
 /// Validates a field value against its expected type.
 fn validate_field_value(
     value: &FieldValue,
@@ -625,9 +660,11 @@ fn validate_field_value(
         // Int can be promoted to Float by design.
     } else if let FieldValue::Array(arr) = value {
         if expected_type_is_multiple(expected_type) {
-            let element_type = get_element_type(expected_type);
-            for el in &arr.elements {
-                diagnostics.extend(validate_field_value(&el.value, &element_type, span));
+            if !validate_flat_numeric_array(arr, expected_type, span, &mut diagnostics) {
+                let element_type = get_element_type(expected_type);
+                for el in &arr.elements {
+                    diagnostics.extend(validate_field_value(&el.value, &element_type, span));
+                }
             }
         } else {
             diagnostics.add(Diagnostic {
@@ -695,6 +732,58 @@ fn validate_field_value(
     }
 
     diagnostics
+}
+
+fn validate_flat_numeric_array(
+    array: &ArrayValue,
+    expected_type: &FieldType,
+    span: &Span,
+    diagnostics: &mut DiagnosticSet,
+) -> bool {
+    let Some(group_size) = flat_numeric_group_size(expected_type) else {
+        return false;
+    };
+
+    if array.elements.is_empty() {
+        return true;
+    }
+
+    if !array
+        .elements
+        .iter()
+        .all(|element| is_numeric_scalar(&element.value))
+    {
+        return false;
+    }
+
+    if array.elements.len() % group_size != 0 {
+        diagnostics.add(Diagnostic {
+            span: span.clone(),
+            severity: Severity::Error,
+            message: format!(
+                "Invalid flat array length for {}: expected a multiple of {} values",
+                field_type_name(expected_type),
+                group_size
+            ),
+            suggestion: None,
+        });
+    }
+
+    true
+}
+
+fn flat_numeric_group_size(expected_type: &FieldType) -> Option<usize> {
+    match expected_type {
+        FieldType::MFVec2f => Some(2),
+        FieldType::MFVec3f => Some(3),
+        FieldType::MFRotation => Some(4),
+        FieldType::MFColor => Some(3),
+        _ => None,
+    }
+}
+
+fn is_numeric_scalar(value: &FieldValue) -> bool {
+    matches!(value, FieldValue::Int(_, _) | FieldValue::Float(_, _))
 }
 
 fn types_are_compatible(actual: &FieldType, expected: &FieldType) -> bool {
