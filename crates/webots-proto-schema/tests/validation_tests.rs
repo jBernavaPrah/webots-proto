@@ -344,9 +344,9 @@ Shape {
         warnings.iter().map(|d| &d.message).collect::<Vec<_>>()
     );
     assert!(
-        warnings
-            .iter()
-            .any(|w| w.message.contains("Cannot insert CadShape node in 'geometry' field of Shape node")),
+        warnings.iter().any(|w| w
+            .message
+            .contains("Cannot insert CadShape node in 'geometry' field of Shape node")),
         "expected CadShape geometry warning, got: {:?}",
         warnings.iter().map(|d| &d.message).collect::<Vec<_>>()
     );

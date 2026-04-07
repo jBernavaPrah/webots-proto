@@ -171,7 +171,9 @@ impl<'a> Parser<'a> {
         self.advance();
 
         let mut alias = None;
-        if let TokenKind::Identifier(value) = &self.current_token.kind {
+        if let TokenKind::Identifier(value) = &self.current_token.kind
+            && self.current_token.span.start_line == url_token.span.end_line
+        {
             alias = Some(value.clone());
             self.advance();
         }
@@ -769,6 +771,42 @@ PROTO Sample [
         assert_eq!(
             doc.externprotos[0].url,
             "webots://projects/appearances/protos/Grass.proto"
+        );
+    }
+
+    #[test]
+    fn test_parse_world_after_externproto_block() {
+        let input = r#"#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/appearances/protos/Parquetry.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+
+WorldInfo {
+  basicTimeStep 12
+  contactProperties [
+    ContactProperties {
+      material1 "wheel_rubber"
+      material2 "asphalt"
+    }
+  ]
+}
+Viewpoint {
+  orientation 0 0 1 0
+  position 0 0 1
+}
+"#;
+        let mut parser = Parser::new(input);
+        let doc = parser
+            .parse_document()
+            .expect("Failed to parse world after EXTERNPROTO block");
+
+        assert_eq!(doc.externprotos.len(), 4);
+        assert_eq!(doc.root_nodes.len(), 2);
+        assert_eq!(
+            doc.externprotos[3].url,
+            "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
         );
     }
 }
