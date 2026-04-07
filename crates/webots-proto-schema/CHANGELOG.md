@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/jBernavaPrah/webots-proto/compare/webots-proto-schema-v0.1.1...webots-proto-schema-v0.1.2) - 2026-04-07
+
+### Other
+
+- Improve EXTERNPROTO parsing
+
 ## [0.1.1](https://github.com/jBernavaPrah/webots-proto/compare/webots-proto-schema-v0.1.0...webots-proto-schema-v0.1.1) - 2026-03-13
 
 ### Other
