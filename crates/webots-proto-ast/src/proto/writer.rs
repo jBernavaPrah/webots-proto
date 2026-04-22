@@ -296,7 +296,6 @@ impl ProtoWriter {
         if multiline {
             writeln!(out, "[")?;
             for element in &array.elements {
-                self.write_indent(out, indent_level + 1)?;
                 self.write_array_element_canonical(out, element, indent_level + 1)?;
                 writeln!(out)?;
             }
@@ -324,8 +323,10 @@ impl ProtoWriter {
         if let FieldValue::Node(node) = &element.value {
             self.write_node_canonical(out, node, indent_level, CanonicalNodeLayout::Block)
         } else if let FieldValue::Template(template) = &element.value {
+            self.write_indent(out, indent_level)?;
             self.write_template_canonical(out, template)
         } else {
+            self.write_indent(out, indent_level)?;
             self.write_field_value_canonical(out, &element.value, indent_level)
         }
     }
