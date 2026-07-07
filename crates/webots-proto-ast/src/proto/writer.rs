@@ -76,6 +76,9 @@ impl ProtoWriter {
         out: &mut dyn fmt::Write,
         externproto: &ExternProto,
     ) -> fmt::Result {
+        if externproto.importable {
+            write!(out, "IMPORTABLE ")?;
+        }
         write!(out, "EXTERNPROTO \"{}\"", externproto.url)?;
         if let Some(alias) = &externproto.alias {
             write!(out, " {}", alias)?;

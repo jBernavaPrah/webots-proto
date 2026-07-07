@@ -119,7 +119,10 @@ impl<'a> Parser<'a> {
         let header = self.header.take();
 
         let mut externprotos = Vec::new();
-        while let TokenKind::ExternProto = self.current_token.kind {
+        while matches!(
+            self.current_token.kind,
+            TokenKind::ExternProto | TokenKind::Importable
+        ) {
             externprotos.push(self.parse_extern_proto()?);
         }
 
@@ -157,6 +160,16 @@ impl<'a> Parser<'a> {
     fn parse_extern_proto(&mut self) -> Result<ExternProto> {
         let start_span = self.current_token.span.clone();
 
+        // An optional leading `IMPORTABLE` keyword marks the declaration as an
+        // `IMPORTABLE EXTERNPROTO` (a PROTO the supervisor may instantiate at
+        // runtime).
+        let importable = if let TokenKind::Importable = self.current_token.kind {
+            self.advance();
+            true
+        } else {
+            false
+        };
+
         self.expect(TokenKind::ExternProto)?;
 
         let url_token = self.current_token.clone();
@@ -178,7 +191,7 @@ impl<'a> Parser<'a> {
             self.advance();
         }
 
-        Ok(ExternProto::new(url, alias, self.span_from(&start_span)))
+        Ok(ExternProto::new(url, alias, self.span_from(&start_span)).with_importable(importable))
     }
 
     fn parse_proto_definition(&mut self) -> Result<ProtoDefinition> {
@@ -456,6 +469,7 @@ impl<'a> Parser<'a> {
             }
             TokenKind::Proto
             | TokenKind::ExternProto
+            | TokenKind::Importable
             | TokenKind::Field
             | TokenKind::VrmlField
             | TokenKind::HiddenField
@@ -561,6 +575,7 @@ impl<'a> Parser<'a> {
             TokenKind::Use => "USE".to_string(),
             TokenKind::Proto => "PROTO".to_string(),
             TokenKind::ExternProto => "EXTERNPROTO".to_string(),
+            TokenKind::Importable => "IMPORTABLE".to_string(),
             TokenKind::Field => "field".to_string(),
             TokenKind::VrmlField => "vrmlField".to_string(),
             TokenKind::HiddenField => "hiddenField".to_string(),
