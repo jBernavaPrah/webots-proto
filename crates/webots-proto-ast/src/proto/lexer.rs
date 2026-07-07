@@ -17,6 +17,7 @@ pub enum TokenKind {
     Use,
     Proto,
     ExternProto,
+    Importable,
     Field,
     VrmlField,
     HiddenField,
@@ -286,6 +287,8 @@ impl<'a> Lexer<'a> {
             TokenKind::Use
         } else if s == "PROTO" {
             TokenKind::Proto
+        } else if s == "IMPORTABLE" {
+            TokenKind::Importable
         } else if s == "EXTERNPROTO" {
             TokenKind::ExternProto
         } else if s == "field" {

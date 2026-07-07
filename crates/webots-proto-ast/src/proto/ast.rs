@@ -48,11 +48,19 @@ pub struct Header {
 }
 
 /// An EXTERNPROTO declaration.
+///
+/// `importable` marks the declaration as `IMPORTABLE EXTERNPROTO`, which Webots
+/// requires for a PROTO that is instantiated at runtime through the supervisor
+/// import API (a plain `EXTERNPROTO` only serves statically declared nodes).
+/// It defaults to `false`, so existing constructions keep emitting a plain
+/// `EXTERNPROTO`; set it with `with_importable(true)`.
 #[derive(Debug, Clone, PartialEq, new, Setters, Serialize, Deserialize)]
 #[setters(prefix = "with_", strip_option)]
 pub struct ExternProto {
     pub url: String,
     pub alias: Option<String>,
+    #[new(default)]
+    pub importable: bool,
     pub span: Span,
 }
 
