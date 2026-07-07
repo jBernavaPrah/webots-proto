@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/jBernavaPrah/webots-proto/compare/webots-proto-ast-v0.1.3...webots-proto-ast-v0.2.0) - 2026-07-07
+
+### Added
+
+- *(ast)* support IMPORTABLE EXTERNPROTO declarations
+
+### Other
+
+- Merge pull request #7 from jBernavaPrah/feat/importable-externproto
+
 ## [0.1.3](https://github.com/jBernavaPrah/webots-proto/compare/webots-proto-ast-v0.1.2...webots-proto-ast-v0.1.3) - 2026-04-22
 
 ### Fixed
